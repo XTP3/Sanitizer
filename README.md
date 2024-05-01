@@ -29,5 +29,5 @@ console.log(san.sanitize({uniqueID: "abc", allowed: false})); // Returns true
 
 You can check if there is a field provided for each parameter specified by passing ```true``` after your data object.
 ```
-san.sanitize({uniqueID: "abc", allowed: false}, true); // Returns false due to missing parameter "completed"
+san.sanitize({uniqueID: "abc", allowed: false}, true); // Returns false due to missing field "completed"
 ```
