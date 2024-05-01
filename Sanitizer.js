@@ -9,7 +9,7 @@ class Sanitizer {
     }
     validateFields(data) {
         const missingFields = this.params.filter(p => data[p.field] === undefined).map(p => p.field);
-        if (missingFields.length > 0) {
+        if(missingFields.length > 0) {
             return false;
         }
         return true;
