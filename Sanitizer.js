@@ -56,6 +56,9 @@ class Sanitizer {
     results() {
         return this.result;
     }
+    valid(field) {
+        return this.result[field] === true;
+    }
 }
 
 module.exports = Sanitizer;
