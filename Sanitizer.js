@@ -1,6 +1,7 @@
 class Sanitizer {
     constructor(params) {
         this.params = params;
+        this.result = {};
     }
 
     validType = (value, expectedType) => typeof value === expectedType;
@@ -8,28 +9,52 @@ class Sanitizer {
         return this.params.find(p => p.field === key);
     }
     validateFields(data) {
-        const missingFields = this.params.filter(p => data[p.field] === undefined).map(p => p.field);
-        if(missingFields.length > 0) {
-            return false;
-        }
-        return true;
+        this.params.forEach(param => {
+            if (data[param.field] === undefined) {
+                this.result[param.field] = "MISSING";
+            }
+        });
+        const missingRequiredFields = this.params.filter(p => p.required && data[p.field] === undefined).map(p => p.field);
+        return missingRequiredFields.length === 0;
     }
 
     sanitize(data, checkForAllFields = false) {
-        let valid = 0;
+        this.result = {};
+        const allFieldsValid = this.validateFields(data);
+
+        let validCount = 0;
         Object.keys(data).forEach(key => {
             const param = this.getParamsForKey(key);
-            if(param) {
+            if(param && this.result[key] !== "MISSING") {
                 if(this.validType(data[key], param.type)) {
                     if(param.condition) {
-                        if(param.condition(data[key])) valid++;
+                        if(param.condition(data[key])) {
+                            validCount++;
+                            this.result[key] = true;
+                        }else {
+                            this.result[key] = false;
+                        }
                     }else {
-                        valid++;
+                        validCount++;
+                        this.result[key] = true;
                     }
+                }else {
+                    this.result[key] = false;
+                }
+            }else if(!param) {
+                if(!checkForAllFields) {
+                    validCount++;
+                    this.result[key] = "UNEXPECTED";
+                }else {
+                    this.result[key] = "UNEXPECTED";
                 }
             }
         });
-        return valid === Object.keys(data).length && (checkForAllFields ? this.validateFields(data) : true);
+        return validCount === Object.keys(data).length && allFieldsValid;
+    }
+
+    results() {
+        return this.result;
     }
 }
 
