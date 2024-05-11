@@ -1,4 +1,4 @@
-class Sanitizer {
+module.exports = class Sanitizer {
     constructor(params) {
         this.params = params;
         this.result = {};
@@ -60,5 +60,3 @@ class Sanitizer {
         return this.result[field] === true;
     }
 }
-
-module.exports = Sanitizer;
