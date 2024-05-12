@@ -24,10 +24,10 @@ Every parameter object requires a ```type``` and a ```field```, additionally you
 
 Pass your data object to the sanitize function and execute:
 ```
-console.log(san.sanitize({uniqueID: "abc", allowed: false})); // Returns true
+console.log(await san.sanitize({uniqueID: "abc", allowed: false})); // Returns true
 ```
 
 You can check if there is a field provided for each parameter specified by passing ```true``` after your data object.
 ```
-san.sanitize({uniqueID: "abc", allowed: false}, true); // Returns false due to missing field "completed"
+await san.sanitize({uniqueID: "abc", allowed: false}, true); // Returns false due to missing field "completed"
 ```
