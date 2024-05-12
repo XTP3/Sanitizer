@@ -18,17 +18,17 @@ module.exports = class Sanitizer {
         return missingRequiredFields.length === 0;
     }
 
-    sanitize(data, checkForAllFields = false) {
+    async sanitize(data, checkForAllFields = false) {
         this.result = {};
         const allFieldsValid = this.validateFields(data);
 
         let validCount = 0;
-        Object.keys(data).forEach(key => {
+        Object.keys(data).forEach(async key => {
             const param = this.getParamsForKey(key);
             if(param && this.result[key] !== "MISSING") {
                 if(this.validType(data[key], param.type)) {
                     if(param.condition) {
-                        if(param.condition(data[key])) {
+                        if(await param.condition(data[key])) {
                             validCount++;
                             this.result[key] = true;
                         }else {
