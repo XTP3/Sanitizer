@@ -11,7 +11,7 @@ module.exports = class Sanitizer {
     }
     validateFields(data) {
         this.params.forEach(param => {
-            if (data[param.field] === undefined) {
+            if(data[param.field] === undefined) {
                 this.result[param.field] = "MISSING";
             }
         });
