@@ -2,6 +2,7 @@ module.exports = class Sanitizer {
     constructor(params) {
         this.params = params;
         this.result = {};
+        this.details = {};
     }
 
     validType = (value, expectedType) => typeof value === expectedType;
@@ -23,14 +24,16 @@ module.exports = class Sanitizer {
         const allFieldsValid = this.validateFields(data);
 
         let validCount = 0;
-        Object.keys(data).forEach(async key => {
+        for(const key of Object.keys(data)) {
             const param = this.getParamsForKey(key);
             if(param && this.result[key] !== "MISSING") {
                 if(this.validType(data[key], param.type)) {
                     if(param.condition) {
-                        if(await param.condition(data[key])) {
+                        const conditionCheck = await param.condition(data[key])
+                        if(conditionCheck) {
                             validCount++;
                             this.result[key] = true;
+                            this.details[key] = conditionCheck;
                         }else {
                             this.result[key] = false;
                         }
@@ -49,7 +52,7 @@ module.exports = class Sanitizer {
                     this.result[key] = "UNEXPECTED";
                 }
             }
-        });
+        };
         return validCount === Object.keys(data).length && allFieldsValid;
     }
 
@@ -58,5 +61,8 @@ module.exports = class Sanitizer {
     }
     valid(field) {
         return this.result[field] === true;
+    }
+    detailsOf(field) {
+        return this.details[field];
     }
 }
